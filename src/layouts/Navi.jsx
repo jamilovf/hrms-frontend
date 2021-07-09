@@ -1,13 +1,18 @@
 import React from 'react'
-import { Menu, Segment, Dropdown, Image } from 'semantic-ui-react'
+import { Menu, Segment, Dropdown, Label} from 'semantic-ui-react'
+
+
+
 
 
 export default function Navi() {
     return (
         <div>
-      <Segment inverted >
-        <Menu  inverted pointing secondary>
-        <Image src='/images/hrms-logo.png' size='small' />
+      <Segment color='blue' inverted >
+        <Menu color="blue"  inverted secondary>
+      <Label color='blue' size='massive'>
+        FJ HRMS
+      </Label>
         <Menu.Menu position='right'>
           <Menu.Item
             name='home'
