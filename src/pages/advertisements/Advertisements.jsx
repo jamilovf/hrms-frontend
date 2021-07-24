@@ -1,13 +1,14 @@
 import React, { useState,useEffect } from 'react'
 import { Button, Card} from 'semantic-ui-react'
-import AdvertisementService from '../services/advertisementService';
+import AdvertisementService from '../../services/advertisementService';
+
 
 export default function Advertisements() {
     const [advertisements, setAdvertisements] = useState([]);
 
     useEffect(() => {
         let advertismentService = new AdvertisementService()
-        advertismentService.getAllActiveAdvertisements().then(result=>setAdvertisements(result.data.data))
+        advertismentService.getAllActiveAdvertisements().then(result => setAdvertisements(result.data.data))
     })
 
     return (

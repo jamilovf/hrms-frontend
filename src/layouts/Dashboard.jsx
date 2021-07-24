@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "semantic-ui-react";
-import AdvertisementFilter from "../pages/AdvertisementFilter";
-import Advertisements from "../pages/Advertisements";
+import AdvertisementFilter from "../pages/advertisements/AdvertisementFilter";
+import Advertisements from "../pages/advertisements/Advertisements";
 
 export default function Dashboard() {
   return (
