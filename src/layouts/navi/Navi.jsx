@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu, Segment, Dropdown, Label} from 'semantic-ui-react'
+import { Menu, Segment, Dropdown, Container} from 'semantic-ui-react'
 
 
 
@@ -9,17 +9,18 @@ export default function Navi() {
     return (
         <div>
       <Segment color='blue' inverted >
-        <Menu color="blue"  inverted secondary>
-      <Label color='blue' size='massive'>
-        FJ HRMS
-      </Label>
-        <Menu.Menu position='right'>
-          <Menu.Item
+        <Container>
+        <Menu color="blue"  inverted secondary  size='large'>
+        <Menu.Menu position='left'>
+        <Menu.Item
+            icon='home'
             name='home'
           />
-          <Menu.Item
+       <Menu.Item
             name='Advertisements'
           />
+        </Menu.Menu>
+        <Menu.Menu position='right'>
           <Dropdown item text='Profile'>
             <Dropdown.Menu>
               <Dropdown.Item>Details</Dropdown.Item>
@@ -29,6 +30,7 @@ export default function Navi() {
           </Dropdown>
           </Menu.Menu>
         </Menu>
+        </Container>
       </Segment>
         </div>
     )
