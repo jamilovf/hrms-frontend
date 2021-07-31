@@ -1,3 +1,3 @@
-.ui.menu .item{
-   position: static;
+.ui.menu .item:before {
+   content: none;
 }
