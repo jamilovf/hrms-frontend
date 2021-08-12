@@ -22,23 +22,23 @@ export default function CvAdd() {
   const [, setEdcLeavingDate] = useState(new Date());
   const [, setExpEntryDate] = useState(new Date());
   const [, setExpLeavingDate] = useState(new Date());
-  const [uploadedImage,setUploadedImage] = useState();
-  const [uploadedImageSrc,setUploadedImageSrc] = useState();
+  const [uploadedImage, setUploadedImage] = useState();
+  const [uploadedImageSrc, setUploadedImageSrc] = useState();
 
   const fileInputRef = React.createRef();
 
- const fileSelectedHandler = event => {
+  const fileSelectedHandler = (event) => {
     console.log(event.target.files[0]);
     setUploadedImage(event.target.files[0]);
+    var file = event.target.files[0];
     var reader = new FileReader();
+    var url = reader.readAsDataURL(file);
     reader.onloadend = (e) => {
-    setUploadedImageSrc(reader.result);
-    } 
-  }
+      setUploadedImageSrc(reader.result);
+    }
+  };
 
-  const fileUploadHandler = () => {
-
-  }
+  const fileUploadHandler = () => {};
 
   const initialValues = {
     educationList: [""],
@@ -126,7 +126,7 @@ export default function CvAdd() {
                 hidden
                 onChange={fileSelectedHandler}
               />
-              <Image src={uploadedImageSrc} size='small' />
+              <Image src={uploadedImageSrc} size="small" />
             </FormField>
           </FormGroup>
           <Segment>
