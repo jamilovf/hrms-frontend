@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Formik, Form, FieldArray } from "formik";
+import { Formik, Form, FieldArray, useFormik } from "formik";
 import * as Yup from "yup";
 import {
   Button,
@@ -18,10 +18,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./CvAdd.css";
 
 export default function CvAdd() {
-  const [, setEdcEntryDate] = useState(new Date());
-  const [, setEdcLeavingDate] = useState(new Date());
-  const [, setExpEntryDate] = useState(new Date());
-  const [, setExpLeavingDate] = useState(new Date());
+  const [edcEntryDate, setEdcEntryDate] = useState([]);
+  const [edcLeavingDate, setEdcLeavingDate] = useState([]);
+  const [expEntryDate, setExpEntryDate] = useState();
+  const [expLeavingDate, setExpLeavingDate] = useState();
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedImageSrc, setUploadedImageSrc] = useState();
 
@@ -40,16 +40,30 @@ export default function CvAdd() {
 
   const fileUploadHandler = () => {};
 
+
   const initialValues = {
-    educationList: [""],
+    coverLetter: "",
+    educationList: [{
+      school: "",
+      department: "",
+      entryDate: "",
+      leavingDate: ""
+    }],
     experienceList: [""],
-    languageList: [""],
-    technologyStackList: [""],
+    languageList: [{
+      language: "",
+      languageLevel: 1
+    }],
+    technologyStackList: [{
+      technology: ""
+    }],
     socialMediaDetails: {
       linkedinUrl: "",
       githubUrl: "",
     },
   };
+
+
 
   const schema = Yup.object({
     educationList: Yup.array().of(
@@ -98,9 +112,30 @@ export default function CvAdd() {
       githubUrl: Yup.string(),
     },
   });
+
+  const languageLevelOptions = [
+    {key: 1, value: 1, text: 1},
+    {key: 2, value: 2, text: 2},
+    {key: 3, value: 3, text: 3},
+    {key: 4, value: 4, text: 4},
+    {key: 5, value: 5, text: 5}
+  ]
+
+  const formik = useFormik({
+    initialValues: initialValues,
+
+    onSubmit: values => {
+      console.log('Form data', values);
+    }
+  })
+
+  const handleChangeSemantic = (fieldName, value) => {
+    formik.setFieldValue(fieldName, value);
+  }
+
   return (
     <div>
-      <Formik initialValues={initialValues} schema={schema}>
+      <Formik initialValues={initialValues} schema={schema} onSubmit={formik.handleSubmit}>
         <Form className="ui form">
           <Header as="h2" icon textAlign="center">
             <Icon name="file alternate outline" circular />
@@ -111,6 +146,8 @@ export default function CvAdd() {
               <textarea
                 name="coverLetter"
                 placeholder="Cover Letter"
+                onChange={formik.handleChange}
+                value={formik.values.coverLetter}
               ></textarea>
             </FormField>
             <FormField width="1">
@@ -145,28 +182,49 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`educationList[${index}]`}
+                              name={`educationList.${index}.school`}
                               placeholder="School"
+                              onChange={formik.handleChange}
+                              value={formik.values.educationList.school}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`educationList[${index}]`}
+                              name={`educationList.${index}.department`}
                               placeholder="Department"
+                              onChange={formik.handleChange}
+                              value={formik.values.educationList.department}
                             ></input>
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`educationList[${index}]`}
+                              name={`educationList.${index}.entryDate`}
+                              selected={edcEntryDate[edcEntryDate.length-1]}
                               placeholderText="Entry Date"
-                              onChange={(date) => setEdcEntryDate(date)}
+                              dateFormat="yyyy/MM/dd"
+                              onChange={ (date) =>{
+                                handleChangeSemantic(`educationList.${index}.entryDate`, date)
+                                setEdcEntryDate( dates => [...dates, date])
+                                console.log(date);
+                              }
+                              }
+                              value={formik.values.educationList.entryDate}
                             />
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`educationList[${index}]`}
+                              name={`educationList.${index}.leavingDate`}
+                              selected={edcLeavingDate[edcLeavingDate.length-1]}
                               placeholderText="Graduate Date"
-                              onChange={(date) => setEdcLeavingDate(date)}
+                              dateFormat="yyyy/MM/dd"
+                              onChange={ (date) =>{
+                                handleChangeSemantic(`educationList.${index}.leavingDate`, date)
+                                setEdcLeavingDate( dates => [...dates, date])
+                                console.log(date);
+                              }
+                              }
+                              value={formik.values.educationList.leavingDate}
+                           
                             />
                           </FormField>
                           {index > 0 && (
@@ -219,6 +277,7 @@ export default function CvAdd() {
                           <FormField>
                             <DatePicker
                               name={`experienceList[${index}]`}
+                              selected={expEntryDate}
                               placeholderText="Entry Date"
                               onChange={(date) => setExpEntryDate(date)}
                             />
@@ -226,6 +285,7 @@ export default function CvAdd() {
                           <FormField>
                             <DatePicker
                               name={`experienceList[${index}]`}
+                              selected={expLeavingDate}
                               placeholderText="Leaving Date"
                               onChange={(date) => setExpLeavingDate(date)}
                             />
@@ -267,24 +327,25 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`languageList[${index}]`}
+                              name={`languageList.${index}.language`}
                               placeholder="Language"
+                              onChange={formik.handleChange}
+                              value={formik.values.languageList.language}  
                             ></input>
                           </FormField>
                           <FormField>
                             <Dropdown
-                              name={`languageList[${index}]`}
+                              name={`languageList.${index}.languageLevel`}
+                              clearable
                               fluid
                               selection
                               placeholder="Level"
+                              options={languageLevelOptions}
+                              onChange={(event, data) =>
+                                handleChangeSemantic(`languageList.${index}.languageLevel`,data.value)
+                              }
+                              value={formik.values.languageList.languageLevel}
                             >
-                              <Dropdown.Menu>
-                                <Dropdown.Item text="1" />
-                                <Dropdown.Item text="2" />
-                                <Dropdown.Item text="3" />
-                                <Dropdown.Item text="4" />
-                                <Dropdown.Item text="5" />
-                              </Dropdown.Menu>
                             </Dropdown>
                           </FormField>
                           {index > 0 && (
@@ -324,8 +385,10 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`technologyStackList[${index}]`}
+                              name={`technologyStackList.${index}.technology`}
                               placeholder="Technology"
+                              onChange={formik.handleChange}
+                              value={formik.values.technologyStackList.technology}
                             ></input>
                           </FormField>
                           {index > 0 && (
@@ -359,6 +422,8 @@ export default function CvAdd() {
                   name="socialMediaDetails.linkedinUrl"
                   placeholder="Linkedin"
                   icon="linkedin"
+                  onChange={formik.handleChange}
+                  value={formik.values.socialMediaDetails.linkedinUrl}
                 />
               </FormField>
               <FormField>
@@ -366,11 +431,13 @@ export default function CvAdd() {
                   name="socialMediaDetails.githubUrl"
                   placeholder="Github"
                   icon="github"
+                  onChange={formik.handleChange}
+                  value={formik.values.socialMediaDetails.githubUrl}
                 />
               </FormField>
             </FormGroup>
           </Segment>
-          <Button primary fluid>
+          <Button type="submit" primary fluid>
             Save CV
           </Button>
         </Form>

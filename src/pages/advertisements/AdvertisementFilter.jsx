@@ -51,6 +51,7 @@ export default function AdvertisementFilter() {
           <Form>
             <Form.Field inline>
               <Dropdown placeholder="City" 
+              clearable
               search
               selection 
               options={cityOptions}
@@ -59,6 +60,7 @@ export default function AdvertisementFilter() {
             <Form.Field inline>
               <Dropdown
                 placeholder="Job Position"
+                clearable
                 search
                 selection
                 options={jobPositionOptions}
@@ -67,6 +69,7 @@ export default function AdvertisementFilter() {
             <Form.Field inline>
               <Dropdown
                 placeholder="Company"
+                clearable
                 search
                 selection
                 options={companyOptions}
