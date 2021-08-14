@@ -16,14 +16,17 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./CvAdd.css";
+import ConvertDate from "../../utilities/helpers/convertDate";
+
 
 export default function CvAdd() {
   const [edcEntryDate, setEdcEntryDate] = useState([]);
   const [edcLeavingDate, setEdcLeavingDate] = useState([]);
-  const [expEntryDate, setExpEntryDate] = useState();
-  const [expLeavingDate, setExpLeavingDate] = useState();
+  const [expEntryDate, setExpEntryDate] = useState([]);
+  const [expLeavingDate, setExpLeavingDate] = useState([]);
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedImageSrc, setUploadedImageSrc] = useState();
+  const convertDate = new ConvertDate();
 
   const fileInputRef = React.createRef();
 
@@ -40,7 +43,6 @@ export default function CvAdd() {
 
   const fileUploadHandler = () => {};
 
-
   const initialValues = {
     coverLetter: "",
     educationList: [{
@@ -49,7 +51,12 @@ export default function CvAdd() {
       entryDate: "",
       leavingDate: ""
     }],
-    experienceList: [""],
+    experienceList: [{
+      company: "",
+      position: "",
+      entryDate: "",
+      leavingDate: ""
+    }],
     languageList: [{
       language: "",
       languageLevel: 1
@@ -68,43 +75,29 @@ export default function CvAdd() {
   const schema = Yup.object({
     educationList: Yup.array().of(
       Yup.object().shape({
-        school: {
-          name: Yup.string(),
-        },
-        department: {
-          name: Yup.string(),
-        },
+        school:  Yup.string(),
+        department: Yup.string(),
         entryYear: Yup.date(),
         graduateYear: Yup.date(),
       })
     ),
     experienceList: Yup.array().of(
       Yup.object().shape({
-        company: {
-          name: Yup.string(),
-        },
-        position: {
-          name: Yup.string(),
-        },
+        company: Yup.string(),
+        position: Yup.string(),
         entryYear: Yup.date(),
         leavingYear: Yup.date(),
       })
     ),
     languageList: Yup.array().of(
       Yup.object().shape({
-        language: {
-          language: Yup.string(),
-        },
-        languageLevel: {
-          level: Yup.number().min(1).max(5),
-        },
+        language: Yup.string(),
+        languageLevel: Yup.number().min(1).max(5),
       })
     ),
     technologyStackList: Yup.array().of(
       Yup.object().shape({
-        technologyStack: {
-          technologyname: Yup.string(),
-        },
+        technologyStack: Yup.string(),
       })
     ),
     socialMediaDetails: {
@@ -199,13 +192,12 @@ export default function CvAdd() {
                           <FormField>
                             <DatePicker
                               name={`educationList.${index}.entryDate`}
-                              selected={edcEntryDate[edcEntryDate.length-1]}
+                              selected={edcEntryDate[index]}
                               placeholderText="Entry Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`educationList.${index}.entryDate`, date)
-                                setEdcEntryDate( dates => [...dates, date])
-                                console.log(date);
+                                handleChangeSemantic(`educationList.${index}.entryDate`, convertDate.convertDate(date))
+                               edcEntryDate[index] = date;
                               }
                               }
                               value={formik.values.educationList.entryDate}
@@ -214,17 +206,15 @@ export default function CvAdd() {
                           <FormField>
                             <DatePicker
                               name={`educationList.${index}.leavingDate`}
-                              selected={edcLeavingDate[edcLeavingDate.length-1]}
+                              selected={edcLeavingDate[index]}
                               placeholderText="Graduate Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`educationList.${index}.leavingDate`, date)
-                                setEdcLeavingDate( dates => [...dates, date])
-                                console.log(date);
+                                handleChangeSemantic(`educationList.${index}.leavingDate`, convertDate.convertDate(date))
+                                edcLeavingDate[index] = date
                               }
                               }
                               value={formik.values.educationList.leavingDate}
-                           
                             />
                           </FormField>
                           {index > 0 && (
@@ -264,30 +254,46 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`experienceList[${index}]`}
+                              name={`experienceList.${index}.company`}
                               placeholder="Company"
+                              onChange={formik.handleChange}
+                              value={formik.values.experienceList.company}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`experienceList[${index}]`}
+                              name={`experienceList.${index}.position`}
                               placeholder="Position"
+                              onChange={formik.handleChange}
+                              value={formik.values.experienceList.position}
                             ></input>
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`experienceList[${index}]`}
-                              selected={expEntryDate}
+                              name={`experienceList.${index}.entryDate`}
+                              selected={expEntryDate[index]}
                               placeholderText="Entry Date"
-                              onChange={(date) => setExpEntryDate(date)}
+                              dateFormat="yyyy/MM/dd"
+                              onChange={ (date) =>{
+                                handleChangeSemantic(`experienceList.${index}.entryDate`, convertDate.convertDate(date))
+                                expEntryDate[index] = date
+                              }
+                              }
+                              value={formik.values.experienceList.entryDate}
                             />
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`experienceList[${index}]`}
-                              selected={expLeavingDate}
+                              name={`experienceList.${index}.leavingDate`}
+                              selected={expLeavingDate[index]}
                               placeholderText="Leaving Date"
-                              onChange={(date) => setExpLeavingDate(date)}
+                              dateFormat="yyyy/MM/dd"
+                              onChange={ (date) =>{
+                                handleChangeSemantic(`experienceList.${index}.leavingDate`, convertDate.convertDate(date))
+                                expLeavingDate[index] = date
+                              }
+                              }
+                              value={formik.values.experienceList.leavingDate}
                             />
                           </FormField>
                           {index > 0 && (
