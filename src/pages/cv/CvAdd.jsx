@@ -17,53 +17,62 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./CvAdd.css";
 import ConvertDate from "../../utilities/helpers/convertDate";
+import axios from "axios";
 
 
 export default function CvAdd() {
-  const [edcEntryDate, setEdcEntryDate] = useState([]);
-  const [edcLeavingDate, setEdcLeavingDate] = useState([]);
-  const [expEntryDate, setExpEntryDate] = useState([]);
-  const [expLeavingDate, setExpLeavingDate] = useState([]);
+  const [edcEntryDate,] = useState([]);
+  const [edcLeavingDate,] = useState([]);
+  const [expEntryDate,] = useState([]);
+  const [expLeavingDate,] = useState([]);
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedImageSrc, setUploadedImageSrc] = useState();
   const convertDate = new ConvertDate();
 
-  const fileInputRef = React.createRef();
-
-  const fileSelectedHandler = (event) => {
-    console.log(event.target.files[0]);
-    setUploadedImage(event.target.files[0]);
-    var file = event.target.files[0];
-    var reader = new FileReader();
-    var url = reader.readAsDataURL(file);
-    reader.onloadend = (e) => {
-      setUploadedImageSrc(reader.result);
-    }
-  };
-
-  const fileUploadHandler = () => {};
+  const handleChangeSemantic = (fieldName, value) => {
+    formik.setFieldValue(fieldName, value);
+  }
+  
 
   const initialValues = {
+    candidateId : 11,
     coverLetter: "",
     educationList: [{
-      school: "",
-      department: "",
+      school: {
+        name: ""
+      },
+      department: {
+        name: ""
+      },
       entryDate: "",
       leavingDate: ""
     }],
     experienceList: [{
-      company: "",
-      position: "",
+      company: {
+        name: ""
+      },
+      position: {
+        name: ""
+      },
       entryDate: "",
       leavingDate: ""
     }],
     languageList: [{
-      language: "",
-      languageLevel: 1
+      language: {
+        language: "",
+      },
+      languageLevel: {
+        level : 1
+      }
     }],
     technologyStackList: [{
-      technology: ""
+      technology: {
+        name: ""
+      }
     }],
+    cvImage: {
+      url : ""
+    },
     socialMediaDetails: {
       linkedinUrl: "",
       githubUrl: "",
@@ -114,17 +123,40 @@ export default function CvAdd() {
     {key: 5, value: 5, text: 5}
   ]
 
+  const fileInputRef = React.createRef();
+
+  const fileSelectedHandler = (event) => {
+    setUploadedImage(event.target.files[0]);
+    var file = event.target.files[0];
+    var reader = new FileReader();
+    if(file){
+    reader.readAsDataURL(file);
+    reader.onloadend = (e) => {
+      setUploadedImageSrc(reader.result);
+    }
+    }
+  };
+
+  const fileUploadHandler = () => {
+    const formData = new FormData();
+    formData.append("file", uploadedImage);
+    formData.append("upload_preset", "suydob0i");
+    return formData;
+  };
+
   const formik = useFormik({
     initialValues: initialValues,
 
-    onSubmit: values => {
-      console.log('Form data', values);
+    onSubmit:  values => {
+
+     axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", fileUploadHandler())
+    .then((response) => {
+      formik.setFieldValue("cvImage.url",response.data.public_id)
+      return formik.values.cvImage.url;
+    }).then(() => 
+      axios.post("http://localhost:8080/api/cv/add", values).then((response) => console.log(response)));
     }
   })
-
-  const handleChangeSemantic = (fieldName, value) => {
-    formik.setFieldValue(fieldName, value);
-  }
 
   return (
     <div>
@@ -146,9 +178,9 @@ export default function CvAdd() {
             <FormField width="1">
               <Button
                 content="Choose Image"
-                labelPosition="bottom"
+                labelPosition="left"
                 icon="image"
-                onClick={() => fileInputRef.current.click()}
+                onClick={(e) =>{e.preventDefault(); fileInputRef.current.click()}}
               />
               <input
                 ref={fileInputRef}
@@ -175,18 +207,18 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`educationList.${index}.school`}
+                              name={`educationList.${index}.school.name`}
                               placeholder="School"
                               onChange={formik.handleChange}
-                              value={formik.values.educationList.school}
+                              value={formik.values.educationList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`educationList.${index}.department`}
+                              name={`educationList.${index}.department.name`}
                               placeholder="Department"
                               onChange={formik.handleChange}
-                              value={formik.values.educationList.department}
+                              value={formik.values.educationList.name}
                             ></input>
                           </FormField>
                           <FormField>
@@ -220,13 +252,13 @@ export default function CvAdd() {
                           {index > 0 && (
                             <Button
                               floated="right"
-                              onClick={() => remove(index)}
+                              onClick={(e) => {e.preventDefault(); remove(index)}}
                             >
                               -
                             </Button>
                           )}
                           {index < 1 && (
-                            <Button floated="left" onClick={() => push("")}>
+                            <Button floated="left" onClick={(e) =>{e.preventDefault(); push("")}}>
                               +
                             </Button>
                           )}
@@ -254,18 +286,18 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`experienceList.${index}.company`}
+                              name={`experienceList.${index}.company.name`}
                               placeholder="Company"
                               onChange={formik.handleChange}
-                              value={formik.values.experienceList.company}
+                              value={formik.values.experienceList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`experienceList.${index}.position`}
+                              name={`experienceList.${index}.position.name`}
                               placeholder="Position"
                               onChange={formik.handleChange}
-                              value={formik.values.experienceList.position}
+                              value={formik.values.experienceList.name}
                             ></input>
                           </FormField>
                           <FormField>
@@ -299,13 +331,13 @@ export default function CvAdd() {
                           {index > 0 && (
                             <Button
                               floated="right"
-                              onClick={() => remove(index)}
+                              onClick={(e) => {e.preventDefault(); remove(index)}}
                             >
                               -
                             </Button>
                           )}
                           {index < 1 && (
-                            <Button floated="left" onClick={() => push("")}>
+                            <Button floated="left" onClick={(e) =>{e.preventDefault(); push("")}}>
                               +
                             </Button>
                           )}
@@ -333,7 +365,7 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`languageList.${index}.language`}
+                              name={`languageList.${index}.language.language`}
                               placeholder="Language"
                               onChange={formik.handleChange}
                               value={formik.values.languageList.language}  
@@ -341,29 +373,29 @@ export default function CvAdd() {
                           </FormField>
                           <FormField>
                             <Dropdown
-                              name={`languageList.${index}.languageLevel`}
+                              name={`languageList.${index}.languageLevel.level`}
                               clearable
                               fluid
                               selection
                               placeholder="Level"
                               options={languageLevelOptions}
                               onChange={(event, data) =>
-                                handleChangeSemantic(`languageList.${index}.languageLevel`,data.value)
+                                handleChangeSemantic(`languageList.${index}.languageLevel.level`,data.value)
                               }
-                              value={formik.values.languageList.languageLevel}
+                              value={formik.values.languageList.level}
                             >
                             </Dropdown>
                           </FormField>
                           {index > 0 && (
                             <Button
                               floated="right"
-                              onClick={() => remove(index)}
+                              onClick={(e) => {e.preventDefault(); remove(index)}}
                             >
                               -
                             </Button>
                           )}
                           {index < 1 && (
-                            <Button floated="left" onClick={() => push("")}>
+                            <Button floated="left" onClick={(e) =>{e.preventDefault(); push("")}}>
                               +
                             </Button>
                           )}
@@ -391,22 +423,22 @@ export default function CvAdd() {
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`technologyStackList.${index}.technology`}
+                              name={`technologyStackList.${index}.technology.name`}
                               placeholder="Technology"
                               onChange={formik.handleChange}
-                              value={formik.values.technologyStackList.technology}
+                              value={formik.values.technologyStackList.name}
                             ></input>
                           </FormField>
                           {index > 0 && (
                             <Button
                               floated="right"
-                              onClick={() => remove(index)}
+                              onClick={(e) => {e.preventDefault(); remove(index)}}
                             >
                               -
                             </Button>
                           )}
                           {index < 1 && (
-                            <Button floated="left" onClick={() => push("")}>
+                            <Button floated="left" onClick={(e) =>{e.preventDefault(); push("")}}>
                               +
                             </Button>
                           )}

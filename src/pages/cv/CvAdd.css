@@ -25,3 +25,7 @@
 .ui.primary.button{
     float: right;
 }
+
+.ui.small.image{
+    width: 165px;
+}
