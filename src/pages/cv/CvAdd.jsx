@@ -21,10 +21,10 @@ import axios from "axios";
 
 
 export default function CvAdd() {
-  const [edcEntryDate,] = useState([]);
-  const [edcLeavingDate,] = useState([]);
-  const [expEntryDate,] = useState([]);
-  const [expLeavingDate,] = useState([]);
+  const [edcEntryYear,] = useState([]);
+  const [edcGraduateYear,] = useState([]);
+  const [expEntryYear,] = useState([]);
+  const [expLeavingYear,] = useState([]);
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedImageSrc, setUploadedImageSrc] = useState();
   const convertDate = new ConvertDate();
@@ -37,43 +37,43 @@ export default function CvAdd() {
   const initialValues = {
     candidateId : 11,
     coverLetter: "",
-    educationList: [{
-      school: {
+    cvCandidateEducationDtoList: [{
+      schoolDto: {
         name: ""
       },
-      department: {
+      departmentDto: {
         name: ""
       },
-      entryDate: "",
-      leavingDate: ""
+      entryYear: "",
+      graduateYear: ""
     }],
-    experienceList: [{
-      company: {
+    cvCandidateExperienceDtoList: [{
+      experienceCompanyDto: {
         name: ""
       },
-      position: {
+      experiencePositionDto: {
         name: ""
       },
-      entryDate: "",
-      leavingDate: ""
+      entryYear: "",
+      leavingYear: ""
     }],
-    languageList: [{
-      language: {
+    cvCandidateLanguageDtoList: [{
+      languageDto: {
         language: "",
       },
-      languageLevel: {
+      languageLevelDto: {
         level : 1
       }
     }],
-    technologyStackList: [{
-      technology: {
-        name: ""
+    cvCandidateTechnologyStackDtoList: [{
+      technologyStackDto: {
+        technologyName: ""
       }
     }],
-    cvImage: {
+    cvImageDto: {
       url : ""
     },
-    socialMediaDetails: {
+    socialMediaDetailsDto: {
       linkedinUrl: "",
       githubUrl: "",
     },
@@ -82,34 +82,34 @@ export default function CvAdd() {
 
 
   const schema = Yup.object({
-    educationList: Yup.array().of(
+    cvCandidateEducationDtoList: Yup.array().of(
       Yup.object().shape({
-        school:  Yup.string(),
-        department: Yup.string(),
+        schoolDto:  Yup.string(),
+        departmentDto: Yup.string(),
         entryYear: Yup.date(),
         graduateYear: Yup.date(),
       })
     ),
-    experienceList: Yup.array().of(
+    cvCandidateExperienceDtoList: Yup.array().of(
       Yup.object().shape({
-        company: Yup.string(),
-        position: Yup.string(),
+        experienceCompanyDto: Yup.string(),
+        experiencePositionDto: Yup.string(),
         entryYear: Yup.date(),
         leavingYear: Yup.date(),
       })
     ),
-    languageList: Yup.array().of(
+    cvCandidateLanguageDtoList: Yup.array().of(
       Yup.object().shape({
-        language: Yup.string(),
-        languageLevel: Yup.number().min(1).max(5),
+        languageDto: Yup.string(),
+        languageLevelDto: Yup.number().min(1).max(5),
       })
     ),
-    technologyStackList: Yup.array().of(
+    cvCandidateTechnologyStackDtoList: Yup.array().of(
       Yup.object().shape({
-        technologyStack: Yup.string(),
+        technologyStackDto: Yup.string(),
       })
     ),
-    socialMediaDetails: {
+    socialMediaDetailsDto: {
       linkedinUrl: Yup.string(),
       githubUrl: Yup.string(),
     },
@@ -125,6 +125,13 @@ export default function CvAdd() {
 
   const fileInputRef = React.createRef();
 
+  const uploadInformer = () => {
+    if (uploadedImage){
+      console.log(uploadedImage)
+      fileUploadHandler();
+    }
+  }
+
   const fileSelectedHandler = (event) => {
     setUploadedImage(event.target.files[0]);
     var file = event.target.files[0];
@@ -135,26 +142,26 @@ export default function CvAdd() {
       setUploadedImageSrc(reader.result);
     }
     }
+    uploadInformer();
   };
 
   const fileUploadHandler = () => {
     const formData = new FormData();
     formData.append("file", uploadedImage);
     formData.append("upload_preset", "suydob0i");
-    return formData;
+    axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", formData)
+    .then((response) => {
+      formik.setFieldValue("cvImageDto.url",response.data.public_id);
+    })
   };
 
   const formik = useFormik({
     initialValues: initialValues,
 
-    onSubmit:  values => {
-
-     axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", fileUploadHandler())
-    .then((response) => {
-      formik.setFieldValue("cvImage.url",response.data.public_id)
-      return formik.values.cvImage.url;
-    }).then(() => 
-      axios.post("http://localhost:8080/api/cv/add", values).then((response) => console.log(response)));
+    onSubmit: values => {
+      console.log(values)
+       axios.post("http://localhost:8080/api/cv/add", values)
+      .then((response) => console.log(response));
     }
   })
 
@@ -195,58 +202,58 @@ export default function CvAdd() {
             <Label as="a" color="red" ribbon>
               Education
             </Label>
-            <FieldArray name="educationList">
+            <FieldArray name="cvCandidateEducationDtoList">
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
-                const { educationList } = values;
+                const { cvCandidateEducationDtoList } = values;
                 return (
                   <div>
-                    {educationList.map((education, index) => (
+                    {cvCandidateEducationDtoList.map((education, index) => (
                       <div key={index}>
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`educationList.${index}.school.name`}
+                              name={`cvCandidateEducationDtoList.${index}.schoolDto.name`}
                               placeholder="School"
                               onChange={formik.handleChange}
-                              value={formik.values.educationList.name}
+                              value={formik.values.cvCandidateEducationDtoList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`educationList.${index}.department.name`}
+                              name={`cvCandidateEducationDtoList.${index}.departmentDto.name`}
                               placeholder="Department"
                               onChange={formik.handleChange}
-                              value={formik.values.educationList.name}
+                              value={formik.values.cvCandidateEducationDtoList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`educationList.${index}.entryDate`}
-                              selected={edcEntryDate[index]}
+                              name={`cvCandidateEducationDtoList.${index}.entryYear`}
+                              selected={edcEntryYear[index]}
                               placeholderText="Entry Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`educationList.${index}.entryDate`, convertDate.convertDate(date))
-                               edcEntryDate[index] = date;
+                                handleChangeSemantic(`cvCandidateEducationDtoList.${index}.entryYear`, convertDate.convertDate(date))
+                               edcEntryYear[index] = date;
                               }
                               }
-                              value={formik.values.educationList.entryDate}
+                              value={formik.values.cvCandidateEducationDtoList.entryYear}
                             />
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`educationList.${index}.leavingDate`}
-                              selected={edcLeavingDate[index]}
+                              name={`cvCandidateEducationDtoList.${index}.graduateYear`}
+                              selected={edcGraduateYear[index]}
                               placeholderText="Graduate Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`educationList.${index}.leavingDate`, convertDate.convertDate(date))
-                                edcLeavingDate[index] = date
+                                handleChangeSemantic(`cvCandidateEducationDtoList.${index}.graduateYear`, convertDate.convertDate(date))
+                                edcGraduateYear[index] = date
                               }
                               }
-                              value={formik.values.educationList.leavingDate}
+                              value={formik.values.cvCandidateEducationDtoList.graduateYear}
                             />
                           </FormField>
                           {index > 0 && (
@@ -274,58 +281,58 @@ export default function CvAdd() {
             <Label as="a" color="blue" ribbon>
               Experience
             </Label>
-            <FieldArray name="experienceList">
+            <FieldArray name="cvCandidateExperienceDtoList">
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
-                const { experienceList } = values;
+                const { cvCandidateExperienceDtoList } = values;
                 return (
                   <div>
-                    {experienceList.map((experience, index) => (
+                    {cvCandidateExperienceDtoList.map((experience, index) => (
                       <div key={index}>
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`experienceList.${index}.company.name`}
+                              name={`cvCandidateExperienceDtoList.${index}.experienceCompanyDto.name`}
                               placeholder="Company"
                               onChange={formik.handleChange}
-                              value={formik.values.experienceList.name}
+                              value={formik.values.cvCandidateExperienceDtoList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <input
-                              name={`experienceList.${index}.position.name`}
+                              name={`cvCandidateExperienceDtoList.${index}.experiencePositionDto.name`}
                               placeholder="Position"
                               onChange={formik.handleChange}
-                              value={formik.values.experienceList.name}
+                              value={formik.values.cvCandidateExperienceDtoList.name}
                             ></input>
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`experienceList.${index}.entryDate`}
-                              selected={expEntryDate[index]}
+                              name={`cvCandidateExperienceDtoList.${index}.entryYear`}
+                              selected={expEntryYear[index]}
                               placeholderText="Entry Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`experienceList.${index}.entryDate`, convertDate.convertDate(date))
-                                expEntryDate[index] = date
+                                handleChangeSemantic(`cvCandidateExperienceDtoList.${index}.entryYear`, convertDate.convertDate(date))
+                                expEntryYear[index] = date
                               }
                               }
-                              value={formik.values.experienceList.entryDate}
+                              value={formik.values.cvCandidateExperienceDtoList.entryYear}
                             />
                           </FormField>
                           <FormField>
                             <DatePicker
-                              name={`experienceList.${index}.leavingDate`}
-                              selected={expLeavingDate[index]}
+                              name={`cvCandidateExperienceDtoList.${index}.leavingYear`}
+                              selected={expLeavingYear[index]}
                               placeholderText="Leaving Date"
                               dateFormat="yyyy/MM/dd"
                               onChange={ (date) =>{
-                                handleChangeSemantic(`experienceList.${index}.leavingDate`, convertDate.convertDate(date))
-                                expLeavingDate[index] = date
+                                handleChangeSemantic(`cvCandidateExperienceDtoList.${index}.leavingYear`, convertDate.convertDate(date))
+                                expLeavingYear[index] = date
                               }
                               }
-                              value={formik.values.experienceList.leavingDate}
+                              value={formik.values.cvCandidateExperienceDtoList.leavingYear}
                             />
                           </FormField>
                           {index > 0 && (
@@ -353,36 +360,36 @@ export default function CvAdd() {
             <Label as="a" color="orange" ribbon>
               Language
             </Label>
-            <FieldArray name="languageList">
+            <FieldArray name="cvCandidateLanguageDtoList">
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
-                const { languageList } = values;
+                const { cvCandidateLanguageDtoList } = values;
                 return (
                   <div>
-                    {languageList.map((language, index) => (
+                    {cvCandidateLanguageDtoList.map((language, index) => (
                       <div key={index}>
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`languageList.${index}.language.language`}
+                              name={`cvCandidateLanguageDtoList.${index}.languageDto.language`}
                               placeholder="Language"
                               onChange={formik.handleChange}
-                              value={formik.values.languageList.language}  
+                              value={formik.values.cvCandidateLanguageDtoList.language}  
                             ></input>
                           </FormField>
                           <FormField>
                             <Dropdown
-                              name={`languageList.${index}.languageLevel.level`}
+                              name={`cvCandidateLanguageDtoList.${index}.languageLevelDto.level`}
                               clearable
                               fluid
                               selection
                               placeholder="Level"
                               options={languageLevelOptions}
                               onChange={(event, data) =>
-                                handleChangeSemantic(`languageList.${index}.languageLevel.level`,data.value)
+                                handleChangeSemantic(`cvCandidateLanguageDtoList.${index}.languageLevelDto.level`,data.value)
                               }
-                              value={formik.values.languageList.level}
+                              value={formik.values.cvCandidateLanguageDtoList.level}
                             >
                             </Dropdown>
                           </FormField>
@@ -411,22 +418,22 @@ export default function CvAdd() {
             <Label as="a" color="teal" ribbon>
               Technology
             </Label>
-            <FieldArray name="technologyStackList">
+            <FieldArray name="cvCandidateTechnologyStackDtoList">
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
-                const { technologyStackList } = values;
+                const { cvCandidateTechnologyStackDtoList } = values;
                 return (
                   <div>
-                    {technologyStackList.map((technologyStack, index) => (
+                    {cvCandidateTechnologyStackDtoList.map((technologyStack, index) => (
                       <div key={index}>
                         <FormGroup widths="equal">
                           <FormField>
                             <input
-                              name={`technologyStackList.${index}.technology.name`}
+                              name={`cvCandidateTechnologyStackDtoList.${index}.technologyStackDto.technologyName`}
                               placeholder="Technology"
                               onChange={formik.handleChange}
-                              value={formik.values.technologyStackList.name}
+                              value={formik.values.cvCandidateTechnologyStackDtoList.technologyName}
                             ></input>
                           </FormField>
                           {index > 0 && (
@@ -457,20 +464,20 @@ export default function CvAdd() {
             <FormGroup widths="equal">
               <FormField>
                 <Input
-                  name="socialMediaDetails.linkedinUrl"
+                  name="socialMediaDetailsDto.linkedinUrl"
                   placeholder="Linkedin"
                   icon="linkedin"
                   onChange={formik.handleChange}
-                  value={formik.values.socialMediaDetails.linkedinUrl}
+                  value={formik.values.socialMediaDetailsDto.linkedinUrl}
                 />
               </FormField>
               <FormField>
                 <Input
-                  name="socialMediaDetails.githubUrl"
+                  name="socialMediaDetailsDto.githubUrl"
                   placeholder="Github"
                   icon="github"
                   onChange={formik.handleChange}
-                  value={formik.values.socialMediaDetails.githubUrl}
+                  value={formik.values.socialMediaDetailsDto.githubUrl}
                 />
               </FormField>
             </FormGroup>
