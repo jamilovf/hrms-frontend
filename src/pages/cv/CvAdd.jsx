@@ -25,7 +25,7 @@ export default function CvAdd() {
   const [edcGraduateYear,] = useState([]);
   const [expEntryYear,] = useState([]);
   const [expLeavingYear,] = useState([]);
-  const [uploadedImage, setUploadedImage] = useState();
+ // const [uploadedImage, setUploadedImage] =  useState();
   const [uploadedImageSrc, setUploadedImageSrc] = useState();
   const convertDate = new ConvertDate();
 
@@ -123,10 +123,12 @@ export default function CvAdd() {
     {key: 5, value: 5, text: 5}
   ]
 
+  
+
   const fileInputRef = React.createRef();
 
-  const fileSelectedHandler = (event) => {
-    setUploadedImage(event.target.files[0]);
+  const fileSelectedHandler =  (event) => {
+    const uploadedImage = event.target.files[0];
     var file = event.target.files[0];
     var reader = new FileReader();
     if(file){
@@ -135,28 +137,42 @@ export default function CvAdd() {
       setUploadedImageSrc(reader.result);
     }
     }
+     fileUploadHandler(uploadedImage);
+    
   };
 
-  const fileUploadHandler = () => {
+  const fileUploadHandler = (uploadedImage) => {
     const formData = new FormData();
     formData.append("file", uploadedImage);
     formData.append("upload_preset", "suydob0i");
-    return axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", formData)
-    .then((response) => {
+    console.log("file uploader called 1"); 
+     axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", formData)
+    .then(
+       (response) => {
+      console.log("file uploader 2");
       formik.setFieldValue("cvImageDto.url",response.data.public_id);
+      console.log("file uploader 3");
+      
+      console.log("File upleader 4");
     })
   };
 
+  const cvAdd = async () => {
+    console.log("cv add called");
+     await axios.post("http://localhost:8080/api/cv/add", formik.values)
+    .then((response) => console.log(response));
+  }
   const formik = useFormik({
     initialValues: initialValues,
 
-    onSubmit: values => {
+    onSubmit:  (values) => {
       console.log(values)
-       fileUploadHandler()
-       .then(() => 
-       axios.post("http://localhost:8080/api/cv/add", values)
-      .then((response) => console.log(response)));
+       
+      
+       cvAdd(values);
+       
     }
+
   })
 
   return (
