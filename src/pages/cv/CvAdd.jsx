@@ -125,13 +125,6 @@ export default function CvAdd() {
 
   const fileInputRef = React.createRef();
 
-  const uploadInformer = () => {
-    if (uploadedImage){
-      console.log(uploadedImage)
-      fileUploadHandler();
-    }
-  }
-
   const fileSelectedHandler = (event) => {
     setUploadedImage(event.target.files[0]);
     var file = event.target.files[0];
@@ -142,14 +135,13 @@ export default function CvAdd() {
       setUploadedImageSrc(reader.result);
     }
     }
-    uploadInformer();
   };
 
   const fileUploadHandler = () => {
     const formData = new FormData();
     formData.append("file", uploadedImage);
     formData.append("upload_preset", "suydob0i");
-    axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", formData)
+    return axios.post("https://api.cloudinary.com/v1_1/dobvuvt76/image/upload", formData)
     .then((response) => {
       formik.setFieldValue("cvImageDto.url",response.data.public_id);
     })
@@ -160,8 +152,10 @@ export default function CvAdd() {
 
     onSubmit: values => {
       console.log(values)
+       fileUploadHandler()
+       .then(() => 
        axios.post("http://localhost:8080/api/cv/add", values)
-      .then((response) => console.log(response));
+      .then((response) => console.log(response)));
     }
   })
 
