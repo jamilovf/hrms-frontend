@@ -14,9 +14,9 @@ import {
 import * as Yup from "yup";
 import logo from "../../../img/login-logo-hr.png";
 import FjTextError from "../../../utilities/customFormControls/FjTextError";
-import "./LoginForm.css";
+import "./SignupForm.css";
 
-export default function LoginHrForm() {
+export default function SignupHrForm() {
   const initialValues = {
     email: "",
     password: "",
@@ -38,7 +38,7 @@ export default function LoginHrForm() {
       <Grid textAlign="center" verticalAlign="middle">
         <Grid.Column style={{ width: 500 }}>
           <Header as="h2" color="blue" textAlign="center">
-            <Image size="massive" src={logo} /> Log-in as System Personnel
+            <Image size="massive" src={logo} /> Sign up as System Personnel
           </Header>
           <Formik    
             initialValues={initialValues}
@@ -78,14 +78,14 @@ export default function LoginHrForm() {
                 </FormField>
                 <ErrorMessage name='password' component={FjTextError}></ErrorMessage>
                 <Button type="submit" color="blue" fluid size="large">
-                  Login
+                  Sign up
                 </Button>
               </Segment>
             </Form>)
 }}
           </Formik>
           <Message>
-            New to us? <Link to="/auth/signup/hr">Sign Up</Link>
+          Already have account? <Link to="/auth/login/hr">Log-in</Link>
           </Message>
         </Grid.Column>
       </Grid>

@@ -1,4 +1,18 @@
-.ui.large.form .ui.segment{
+.ui.form .ui.segment{
     padding-top: 25px;
     padding-bottom: 25px;
+}
+
+.ui.center.aligned.middle.aligned.grid .column{
+    margin-top: 120px;
+}
+
+.ui.red.pointing.basic.label{
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.error{
+    color:red;
+    text-align: left;
 }
