@@ -10,13 +10,18 @@ import LoginHrForm from "./pages/auth/login/LoginHrForm";
 import SignupCandidateForm from "./pages/auth/signup/SignupCandidateForm";
 import SignupEmployerForm from "./pages/auth/signup/SignupEmployerForm";
 import SignupHrForm from "./pages/auth/signup/SignupHrForm";
+import HomeSignupDashboard from "./layouts/home/HomeSignupDashboard";
+import HomeNavi from "./layouts/home/HomeNavi";
+import HomeLoginDashboard from "./layouts/home/HomeLoginDashboard";
 
 function App() {
 
   const pathname = window.location.pathname;
+  let pathLogin = "/auth/login";
   let pathLoginCand = "/auth/login/candidate";
   let pathLoginEmp = "/auth/login/employer";
   let pathLoginHr = "/auth/login/hr";
+  let pathSignup = "/auth/signup";
   let pathSignupCand = "/auth/signup/candidate";
   let pathSignupEmp = "/auth/signup/employer";
   let pathSignupHr = "/auth/signup/hr";
@@ -25,11 +30,17 @@ function App() {
     <div className="App">
     
     {pathname === pathLoginCand || pathname === pathLoginEmp || pathname === pathLoginHr || 
-    pathname === pathSignupCand || pathname === pathSignupEmp || pathname === pathSignupHr  
+    pathname === pathSignupCand || pathname === pathSignupEmp || pathname === pathSignupHr  || 
+    pathname === pathLogin || pathname === pathSignup
     ? null : <Navi /> }
     {console.log(pathname)}
+
+    <Route exact path="/auth/signup" component={HomeNavi} />
+    <Route exact path="/auth/login" component={HomeNavi} />
       
       <Container className="main">
+      <Route exact path="/auth/signup" component={HomeSignupDashboard} />
+      <Route exact path="/auth/login" component={HomeLoginDashboard} />
       <Route exact path="/auth/login/candidate" component={LoginCandidateForm} />
       <Route exact path="/auth/login/employer" component={LoginEmployerForm} />
       <Route exact path="/auth/login/hr" component={LoginHrForm} />
