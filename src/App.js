@@ -12,9 +12,23 @@ import SignupEmployerForm from "./pages/auth/signup/SignupEmployerForm";
 import SignupHrForm from "./pages/auth/signup/SignupHrForm";
 
 function App() {
+
+  const pathname = window.location.pathname;
+  let pathLoginCand = "/auth/login/candidate";
+  let pathLoginEmp = "/auth/login/employer";
+  let pathLoginHr = "/auth/login/hr";
+  let pathSignupCand = "/auth/signup/candidate";
+  let pathSignupEmp = "/auth/signup/employer";
+  let pathSignupHr = "/auth/signup/hr";
+
   return (
     <div className="App">
-      <Route path="/(!login)" component={Navi}/>
+    
+    {pathname === pathLoginCand || pathname === pathLoginEmp || pathname === pathLoginHr || 
+    pathname === pathSignupCand || pathname === pathSignupEmp || pathname === pathSignupHr  
+    ? null : <Navi /> }
+    {console.log(pathname)}
+      
       <Container className="main">
       <Route exact path="/auth/login/candidate" component={LoginCandidateForm} />
       <Route exact path="/auth/login/employer" component={LoginEmployerForm} />

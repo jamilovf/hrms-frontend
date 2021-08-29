@@ -21,7 +21,7 @@ export default function Navi() {
             </Menu.Menu>
             <Menu.Menu position="right">
               <Link to="/cv/add">
-                {" "}
+                
                 <Menu.Item icon="file alternate outline" name="Add CV" />
               </Link>
               <Dropdown item text="Profile">
