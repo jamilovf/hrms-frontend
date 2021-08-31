@@ -77,6 +77,7 @@ export default function LoginCandidateForm() {
                   />
                 </FormField>
                 <ErrorMessage name='password' component={FjTextError}></ErrorMessage>
+                <Link className="forgotPassword">Forgot Password?</Link>
                 <Button type="submit" color="blue" fluid size="large">
                   Login
                 </Button>

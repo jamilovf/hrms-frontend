@@ -16,7 +16,7 @@ export default function HomeNavi() {
             </Menu.Menu>
             <Menu.Menu position="right">
               <Button.Group>
-                <Link to="/auth/login"><Button  color="red">Sign in</Button></Link>
+                <Link to="/auth/login"><Button  color="red">Log-in</Button></Link>
                 <Button.Or />
                 <Link to="/auth/signup"><Button color="yellow">Sign up</Button></Link>
               </Button.Group>

@@ -11,6 +11,13 @@
     margin-top: 0px;
     margin-bottom: 5px;
 }
+.ui.blue.large.fluid.button{
+    margin-top: 5px;
+}
+
+.forgotPassword{
+    padding-left: 330px;
+}
 
 .error{
     color:red;

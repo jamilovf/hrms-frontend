@@ -14,9 +14,13 @@ import {
 import * as Yup from "yup";
 import logo from "../../../img/login-logo-hr.png";
 import FjTextError from "../../../utilities/customFormControls/FjTextError";
+import AuthService from "../../../services/authService";
 import "./LoginForm.css";
 
 export default function LoginHrForm() {
+
+  let authService = new AuthService();
+
   const initialValues = {
     email: "",
     password: "",
@@ -30,7 +34,9 @@ export default function LoginHrForm() {
   });
 
   const onSubmit = (values) => {
-    console.log(values);
+    authService
+    .loginUser(values)
+    .then(response => console.log(response))
   }
 
   return (
@@ -77,6 +83,7 @@ export default function LoginHrForm() {
                   />
                 </FormField>
                 <ErrorMessage name='password' component={FjTextError}></ErrorMessage>
+                <Link className="forgotPassword">Forgot Password?</Link>
                 <Button type="submit" color="blue" fluid size="large">
                   Login
                 </Button>

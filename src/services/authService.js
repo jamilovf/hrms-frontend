@@ -12,4 +12,8 @@ export default class AuthService{
     registerSystemPersonnel(values){
         return axios.post("http://localhost:8080/api/auth/registerSystemPersonnel",values)
     }
+
+    loginUser(values){
+        return axios.post("http://localhost:8080/api/auth/login",values)
+    }
 }
