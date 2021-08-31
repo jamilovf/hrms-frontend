@@ -1,6 +1,6 @@
 import { ErrorMessage,Form,Formik } from "formik";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Button,
   FormField,
@@ -14,23 +14,49 @@ import {
 import * as Yup from "yup";
 import logo from "../../../img/login-logo-employer.png";
 import FjTextError from "../../../utilities/customFormControls/FjTextError";
+import AuthService from "../../../services/authService";
 import "./SignupForm.css";
 
 export default function SignupEmployerForm() {
+
+  let authService = new AuthService();
+
+  let history = useHistory();
+
   const initialValues = {
     email: "",
     password: "",
+    passwordConfirmation: "",
+    companyName: "",
+    website: "",
+    phoneNumber: ""
   };
 
   const schema = Yup.object({
     email: Yup.string()
       .email("Invalid email format")
       .required("Please Enter your email"),
-    password: Yup.string().required("Please Enter your password")
+    password: Yup.string().required("Please Enter your password"),
+    passwordConfirmation: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    companyName: Yup.string().required("Please Enter your company name"),
+    website: Yup.string().url().required("Please Enter your website url"),
+    phoneNumber: Yup.string().required("Please Enter your phone number"),
   });
 
+  const successRedirect = () => {
+    history.push({
+      pathname: "/auth/signup/success",
+  })
+  }
+
   const onSubmit = (values) => {
-    console.log(values);
+    authService.registerEmployer(values)
+    .then(response => {
+      if(response.status === 200){
+        successRedirect();
+      }
+    });
   }
 
   return (
@@ -54,7 +80,7 @@ export default function SignupEmployerForm() {
                   <Input
                     size="large"
                     fluid
-                    icon="user"
+                    icon="mail"
                     iconPosition="left"
                     name="email"
                     placeholder="E-mail address"
@@ -77,6 +103,59 @@ export default function SignupEmployerForm() {
                   />
                 </FormField>
                 <ErrorMessage name='password' component={FjTextError}></ErrorMessage>
+                <FormField >
+                  <Input
+                    size="large"
+                    fluid
+                    icon="lock"
+                    iconPosition="left"
+                    name="passwordConfirmation"
+                    placeholder="Re-type Password"
+                    type="password"
+                    onChange={formik.handleChange}
+                    value={formik.values.passwordConfirmation}
+                  />
+                </FormField>
+                <ErrorMessage name='passwordConfirmation' component={FjTextError}></ErrorMessage>
+                <FormField >
+                  <Input
+                    size="large"
+                    fluid
+                    icon="building"
+                    iconPosition="left"
+                    name="companyName"
+                    placeholder="Company name"
+                    onChange={formik.handleChange}
+                    value={formik.values.companyName}
+                  />
+                </FormField>
+                <ErrorMessage name='companyName' component={FjTextError}></ErrorMessage>
+                <FormField >
+                  <Input
+                    size="large"
+                    fluid
+                    icon="globe"
+                    iconPosition="left"
+                    name="website"
+                    placeholder="Website"
+                    onChange={formik.handleChange}
+                    value={formik.values.website}
+                  />
+                </FormField>
+                <ErrorMessage name='website' component={FjTextError}></ErrorMessage>
+                <FormField >
+                  <Input
+                    size="large"
+                    fluid
+                    icon="phone"
+                    iconPosition="left"
+                    name="phoneNumber"
+                    placeholder="Phone number"
+                    onChange={formik.handleChange}
+                    value={formik.values.phoneNumber}
+                  />
+                </FormField>
+                <ErrorMessage name='phoneNumber' component={FjTextError}></ErrorMessage>
                 <Button type="submit" color="blue" fluid size="large">
                   Sign up
                 </Button>

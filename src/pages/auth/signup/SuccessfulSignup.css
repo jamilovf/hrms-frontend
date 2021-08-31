@@ -1,0 +1,13 @@
+.ui.text.container{
+    margin-top: 7em;
+}
+.ui.inverted.header{
+    color: black;
+    font-size:'4em';
+    margin-bottom: 0;
+    margin-top: '3em';
+}
+
+.check.circle.outline.massive.icon{
+    color: green;
+}

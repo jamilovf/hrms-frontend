@@ -13,6 +13,7 @@ import SignupHrForm from "./pages/auth/signup/SignupHrForm";
 import HomeSignupDashboard from "./layouts/home/HomeSignupDashboard";
 import HomeNavi from "./layouts/home/HomeNavi";
 import HomeLoginDashboard from "./layouts/home/HomeLoginDashboard";
+import SuccessfulSignup from "./pages/auth/signup/SuccessfulSignup";
 
 function App() {
 
@@ -25,28 +26,33 @@ function App() {
   let pathSignupCand = "/auth/signup/candidate";
   let pathSignupEmp = "/auth/signup/employer";
   let pathSignupHr = "/auth/signup/hr";
+  let pathSignupSuccess = "/auth/signup/success";
 
   return (
     <div className="App">
     
     {pathname === pathLoginCand || pathname === pathLoginEmp || pathname === pathLoginHr || 
     pathname === pathSignupCand || pathname === pathSignupEmp || pathname === pathSignupHr  || 
-    pathname === pathLogin || pathname === pathSignup
+    pathname === pathLogin || pathname === pathSignup || pathname === pathSignupSuccess || pathname === "/"
     ? null : <Navi /> }
     {console.log(pathname)}
 
-    <Route exact path="/auth/signup" component={HomeNavi} />
-    <Route exact path="/auth/login" component={HomeNavi} />
+    <Route exact path="/" component={HomeNavi} />
+    <Route path="/auth/signup" component={HomeNavi} />
+    <Route path="/auth/login" component={HomeNavi} />
+    
       
       <Container className="main">
+      <Route exact path="/" component={HomeLoginDashboard} />
       <Route exact path="/auth/signup" component={HomeSignupDashboard} />
-      <Route exact path="/auth/login" component={HomeLoginDashboard} />
+      <Route exact path="/auth/login" component={HomeLoginDashboard} />   
       <Route exact path="/auth/login/candidate" component={LoginCandidateForm} />
       <Route exact path="/auth/login/employer" component={LoginEmployerForm} />
       <Route exact path="/auth/login/hr" component={LoginHrForm} />
       <Route exact path="/auth/signup/candidate" component={SignupCandidateForm} />
       <Route exact path="/auth/signup/employer" component={SignupEmployerForm} />
       <Route exact path="/auth/signup/hr" component={SignupHrForm} />
+      <Route exact path="/auth/signup/success" component={SuccessfulSignup} />
         <Dashboard />
       </Container>
     </div>
