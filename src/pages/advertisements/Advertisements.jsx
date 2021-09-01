@@ -8,7 +8,9 @@ export default function Advertisements() {
 
     useEffect(() => {
         let advertismentService = new AdvertisementService()
-        advertismentService.getAllActiveAdvertisements().then(result => setAdvertisements(result.data.data))
+        advertismentService.getAllActiveAdvertisements()
+        .then(result => setAdvertisements(result.data.data))
+        .catch(console.error("advert ended"))
     })
 
     return (

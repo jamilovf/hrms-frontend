@@ -14,6 +14,7 @@ import HomeSignupDashboard from "./layouts/home/HomeSignupDashboard";
 import HomeNavi from "./layouts/home/HomeNavi";
 import HomeLoginDashboard from "./layouts/home/HomeLoginDashboard";
 import SuccessfulSignup from "./pages/auth/signup/SuccessfulSignup";
+import axios from "axios";
 
 function App() {
 
@@ -27,6 +28,25 @@ function App() {
   let pathSignupEmp = "/auth/signup/employer";
   let pathSignupHr = "/auth/signup/hr";
   let pathSignupSuccess = "/auth/signup/success";
+
+  //axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('Authorization');
+  //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+  /*axios.interceptors.request.use(
+    config => {
+      console.log("interceptor started");
+      config.defaults.headers = { 
+        'Authorization': window.localStorage.getItem('Authorization'),
+        'Accept': 'application/json'
+      } 
+      console.log(window.localStorage.getItem('Authorization'));
+      console.log("interceptor ended");
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+  );*/
 
   return (
     <div className="App">

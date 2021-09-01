@@ -1,6 +1,6 @@
 import { ErrorMessage,Form,Formik } from "formik";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Button,
   FormField,
@@ -21,6 +21,8 @@ export default function LoginHrForm() {
 
   let authService = new AuthService();
 
+  let history = useHistory();
+
   const initialValues = {
     email: "",
     password: "",
@@ -36,7 +38,12 @@ export default function LoginHrForm() {
   const onSubmit = (values) => {
     authService
     .loginUser(values)
-    .then(response => console.log(response))
+    .then(response =>  {
+      window.localStorage.setItem("Authorization", response.headers["authorization"])
+      history.push({
+        pathname: "/advertisements",
+    })
+    })
   }
 
   return (
